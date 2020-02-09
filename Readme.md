@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Алексей Таиров](https://up.htmlacademy.ru/javascript/19/user/1171457).
-* Наставник: `Неизвестно`.
+* Наставник: [Захар Овчаров](https://htmlacademy.ru/profile/id906939).
 
 ---
 
