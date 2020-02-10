@@ -32,6 +32,11 @@ var postItems = [];
 var similarPictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var similarPicturesElement = document.querySelector('.pictures');
 
+var bigPicture = document.querySelector('.big-picture');
+var bigPictureImg = bigPicture.querySelector('.big-picture__img');
+var commentsList = bigPicture.querySelector('.social__comments');
+var commentTemplate = commentsList.querySelector('.social__comment');
+
 // Выбирает случайное число из заданного промежутка
 function getRandomFromTo(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -76,9 +81,46 @@ var renderPicture = function (post) {
   return pictureElement;
 };
 
+
+// module3-task3 Показываем большое фото
+bigPicture.classList.remove('hidden');
+
+bigPicture.querySelector('.social__comment-count').classList.add('hidden');
+bigPicture.querySelector('.comments-loader').classList.add('hidden');
+document.querySelector('body').classList.add('modal-open');
+
+// Заполняет блок bigPicture информацией из первого объекта массива postItems
+var createBigPicture = function (post) {
+  bigPictureImg.querySelector('.big-picture__img').src = post.url;
+  bigPicture.querySelector('.likes-count').textContent = post.likes;
+  bigPicture.querySelector('.comments-count').textContent = post.comments.length;
+  bigPicture.querySelector('.social__caption').textContent = post.description;
+
+  var postComments = createComment(postItems[0].comments);
+  addCommentElement(postComments);
+
+  return bigPicture;
+};
+
+// Удаляет старые комментарии и добавляет новые
+var addCommentElement = function (commentNodes) {
+  commentsList.innerHTML = '';
+  commentsList.appendChild(commentNodes);
+};
+
+// Клонирует и заполняет шаблон комментария
+var renderComment = function (comment) {
+  var commentElement = commentTemplate.cloneNode(true);
+  commentElement.querySelector('.social__picture').src = comment.avatar;
+  commentElement.querySelector('.social__picture').alt = comment.name;
+  commentElement.querySelector('.social__text').textContent = comment.message;
+
+  return commentElement;
+};
+
 var fragment = document.createDocumentFragment();
 
-// функция заполнения блока DOM-элементами
+// Заполняет fragment DOM-элементами
 var createSimilarPicture = function (array) {
   for (var k = 0; k < array.length; k++) {
     fragment.appendChild(renderPicture(array[k]));
@@ -87,4 +129,18 @@ var createSimilarPicture = function (array) {
 
 createSimilarPicture(postItems);
 
+// функция заполнения блока commentFragment DOM-элементами комментариями
+var createComment = function (array) {
+  var commentFragment = document.createDocumentFragment();
+  for (var n = 0; n < array.length; n++) {
+    commentFragment.appendChild(renderComment(array[n]));
+  }
+  return commentFragment;
+};
+
+createBigPicture(postItems[0]);
+
+// Отрисовка сгенерированных DOM-элементов в виде fragment в соответствующий блок
 similarPicturesElement.appendChild(fragment);
+
+
