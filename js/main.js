@@ -33,7 +33,6 @@ var similarPictureTemplate = document.querySelector('#picture').content.querySel
 var similarPicturesElement = document.querySelector('.pictures');
 
 var bigPicture = document.querySelector('.big-picture');
-var bigPictureImg = bigPicture.querySelector('.big-picture__img');
 var commentsList = bigPicture.querySelector('.social__comments');
 var commentTemplate = commentsList.querySelector('.social__comment');
 
@@ -91,7 +90,7 @@ document.querySelector('body').classList.add('modal-open');
 
 // Заполняет блок bigPicture информацией из первого объекта массива postItems
 var createBigPicture = function (post) {
-  bigPictureImg.querySelector('.big-picture__img').src = post.url;
+  bigPicture.querySelector('.big-picture__img').src = post.url;
   bigPicture.querySelector('.likes-count').textContent = post.likes;
   bigPicture.querySelector('.comments-count').textContent = post.comments.length;
   bigPicture.querySelector('.social__caption').textContent = post.description;
