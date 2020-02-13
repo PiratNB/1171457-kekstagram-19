@@ -61,7 +61,7 @@ function createRandomComment(count) {
 }
 
 // Создает случайный объект поста
-for (var i = 0; i <= AMOUNT_PHOTOS.length; i++) {
+for (var i = 0; i <= AMOUNT_PHOTOS; i++) {
   postItems.push({
     url: 'photos/' + (i + 1) + '.jpg',
     description: getRandomItem(PHOTO_DESCRIPIONS),
