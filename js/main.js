@@ -28,6 +28,8 @@ var MAX_SCALE = 100;
 var MAX_HASHTAG_LENGTH = 20;
 // Максимальное количество хэштэгов
 var MAX_HASHTAG_COUNT = 5;
+// Максимальная длина описания
+var MAX_DESCRIPTION_LENGTH = 140;
 // Ссылка на отправку формы
 var FORM_UPLOAD_IMAGE_ACTION = 'https://js.dump.academy/kekstagram';
 // Тексты сообщений комментариев
@@ -74,6 +76,10 @@ var textDescription = document.querySelector('.text__description');
 var imgUploadCancel = document.querySelector('.img-upload__cancel');
 // Картинка предварительного просмотра
 var imgUploadPreview = document.querySelector('.img-upload__preview');
+// Контейнер для отрисовки полноэкранной фотографии и инфомации о ней
+var bigPicture = document.querySelector('.big-picture');
+// Кнопка закрытия большой картинки
+var pictureCancel = document.querySelector('#picture-cancel');
 // список фильтров
 var effectList = imgUploadOverlay.querySelector('.effects__list');
 // Слайдер насыщености
@@ -92,6 +98,9 @@ var scaleControlValue = imgUploadOverlay.querySelector('.scale__control--value')
 var fieldSetEffectLevel = imgUploadOverlay.querySelector('.effect-level');
 // текущий выбранный фильтр
 var currentFilterId;
+
+// массив объектов фотографий
+var photoDescriptions = getPhotoDescriptions(PHOTO_COUNT);
 
 // Объект настроек фильтров {id фильтра: {класс картинки предпросмотра, строка инлайн фильтра}}
 var filterOption = {
@@ -127,7 +136,7 @@ var filterOption = {
   }
 };
 
-//  Включение и выключение видимости элемента
+// Включение и выключение видимости элемента
 function visibleToggle(element, isVisible) {
   if (isVisible) {
     element.classList.remove('hidden');
@@ -212,6 +221,42 @@ function getPhotoDescriptions(photoCount) {
   return returnArray;
 }
 
+// Обрабртка клика по превью
+function onSmallPictureClick(evt) {
+  // Показ большой фотографии
+  if (evt.target.pictureObject) {
+    // Эмуляция клика по картинке
+    showBigPicture(evt.target.pictureObject, bigPicture);
+    return;
+  }
+  showBigPicture(evt.target.parentNode.pictureObject, bigPicture);
+}
+
+function oncloseBigPictureClick() {
+  closeBigPicture();
+}
+
+// Скрытие окна с большой фотографией
+function closeBigPicture() {
+  visibleToggle(bigPicture, false);
+  // Удаляем обработчики
+  document.removeEventListener('keydown', onBigPictureKeyDown);
+  pictureCancel.removeEventListener('click', oncloseBigPictureClick);
+  // Добавляем прокрутку контейнера фотографий позади при скролле
+  document.body.classList.remove('modal-open');
+}
+
+// Обработчик нажатия клавиш для большой картинки
+function onBigPictureKeyDown(evt) {
+  if (evt.key === ESC_KEY) {
+    // Закрытие окна по Esc
+    closeBigPicture();
+  } else if (evt.key === ENTER_KEY) {
+    if (evt.target === pictureCancel) {
+      closeBigPicture();
+    }
+  }
+}
 // Возвращает отрисованный узел с фотографиями согласно шаблона
 function renderPicture(picture) {
   // Шаблон для фотографии
@@ -222,16 +267,19 @@ function renderPicture(picture) {
   pictureElement.querySelector('.picture__img').src = picture.url;
   pictureElement.querySelector('.picture__likes').textContent = picture.likes;
   pictureElement.querySelector('.picture__comments').textContent = picture.comments.length.toString();
-
+  // закрепляем объект за элементом
+  pictureElement.pictureObject = picture;
+  // Добавляем обработчик клика по превью
+  pictureElement.addEventListener('click', onSmallPictureClick);
   return pictureElement;
 }
 
 // Отрисовка всех фотографий
-function renderPictures(photoDescriptions) {
+function renderPictures(photoDescriptionsArray) {
   // Фрагмент для вставки
   var fragment = document.createDocumentFragment();
-  for (var p = 0; p < photoDescriptions.length; p++) {
-    fragment.appendChild(renderPicture(photoDescriptions[p]));
+  for (var p = 0; p < photoDescriptionsArray.length; p++) {
+    fragment.appendChild(renderPicture(photoDescriptionsArray[p]));
   }
 
   // Элемент в который будем вставлять фотографии
@@ -270,7 +318,10 @@ function showBigPicture(photoDescription, bigPictureElement) {
   visibleToggle(document.querySelector('.comments-loader'), false);
   // Убираем прокрутку контейнера фотографий позади при скролле
   document.body.classList.add('modal-open');
-
+  // Добаляем обработчик нажатия клавиш при открытом диалоге большой картинки
+  document.addEventListener('keydown', onBigPictureKeyDown);
+  // Добавляем обработчик клика по кнопке закрытия
+  pictureCancel.addEventListener('click', oncloseBigPictureClick);
   // Заменяем информацию для выбранной фотографии
   // url фотографии
   bigPictureElement.querySelector('img').src = photoDescription.url;
@@ -385,6 +436,16 @@ function checkHashTags(hashTagStr) {
   return '';
 }
 
+// Проверяет валидность ввода описания картинки
+function checkDescription(descriptionStr) {
+  if (descriptionStr.length === 0) {
+    return '';
+  } else if (descriptionStr.length > MAX_DESCRIPTION_LENGTH) {
+    return 'Максимальная длина описания: ' + MAX_DESCRIPTION_LENGTH;
+  }
+  return '';
+}
+
 function setDefaultState(clearUploadFileInputValue) {
   currentFilterId = DEFAULT_EFFECT;
   setFilterClass(DEFAULT_EFFECT);
@@ -487,6 +548,12 @@ function onTextHashTagsInput() {
   textReportValidity(textHashtags);
 }
 
+// Обработчик на на ввод описания картинки
+function onTextDescriptionInput() {
+  textDescription.setCustomValidity(checkDescription(textDescription.value));
+  textReportValidity(textDescription);
+}
+
 // Открытие формы загрузки изображения
 function openImgUploadForm() {
   visibleToggle(imgUploadOverlay, true);
@@ -505,7 +572,10 @@ function openImgUploadForm() {
   scaleControlBigger.addEventListener('click', onScaleIncreaseClick);
   // Добавляем обработчик ввода хэштэгов
   textHashtags.addEventListener('input', onTextHashTagsInput);
-
+  // Добавляем обработчик ввода хэштэгов
+  textDescription.addEventListener('input', onTextDescriptionInput);
+  // Установка ограничения для длины описания
+  textDescription.maxLength = MAX_DESCRIPTION_LENGTH;
   // Установки по умолчанию
   setDefaultState(false);
 }
@@ -528,17 +598,8 @@ function closeImgUploadForm() {
 
 // Основная выполняющая функция
 function initialisation() {
-  // массив объектов фотографий
-  var photoDescriptions = getPhotoDescriptions(PHOTO_COUNT);
   // Отрисовка массива описаний фотографий
   renderPictures(photoDescriptions);
-  // Контейнер для отрисовки полноэкранной фотографии и инфомации о ней
-  var bigPicture = document.querySelector('.big-picture');
-
-  // Показ большой фотографии (по заданию 0 индекс)
-  if (bigPicture && photoDescriptions.length === 0) {
-    showBigPicture(photoDescriptions[0], bigPicture);
-  }
 
   // Назначение action для формы
   formUploadImage.action = FORM_UPLOAD_IMAGE_ACTION;
