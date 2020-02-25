@@ -32,6 +32,10 @@
   var MAX_DESCRIPTION_LENGTH = 140;
   // Ссылка на отправку формы
   var FORM_UPLOAD_IMAGE_ACTION = 'https://js.dump.academy/kekstagram';
+  // Флаг указывающий на использованиеонлайн данных, если false - используются моки
+  var IS_USE_ONLINE_DATA = true;
+  // URL для загрузки данных с сервера
+  var DATA_URL = 'https://js.dump.academy/kekstagram/data';
   // Тексты сообщений комментариев
   var commentMessages = [
     'Всё отлично!',
@@ -76,6 +80,8 @@
     MAX_HASHTAG_COUNT: MAX_HASHTAG_COUNT, // Максимальное количество хэштэгов
     MAX_DESCRIPTION_LENGTH: MAX_DESCRIPTION_LENGTH, // Максимальная длина описания
     FORM_UPLOAD_IMAGE_ACTION: FORM_UPLOAD_IMAGE_ACTION, // Ссылка на отправку формы
+    IS_USE_ONLINE_DATA: IS_USE_ONLINE_DATA, // Флаг указывающий на использованиеонлайн данных, если false - используются моки
+    DATA_URL: DATA_URL, // URL для загрузки данных с сервера
     commentMessages: commentMessages, // Тексты сообщений комментариев
     commentsNames: names // Имена коментаторов
   };
