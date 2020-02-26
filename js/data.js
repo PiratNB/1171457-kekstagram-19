@@ -115,16 +115,12 @@
    */
   function onErrorLoadData(errorMessage) {
     onErrorHandler(errorMessage);
-
-    return;
   }
 
 
   if (window.settings.IS_USE_ONLINE_DATA) {
     // Загрузка данных с сервера
     window.backend.load(window.settings.DATA_URL, onSuccessLoadData, onErrorLoadData);
-
-    return;
   }
   window.gallery.renderPictures(getPhotoDescriptions(window.settings.PHOTO_COUNT));
 })();

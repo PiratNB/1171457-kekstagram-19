@@ -2,6 +2,12 @@
 
 (function () {
 
+  var XHR_TIMEOUT = 10000;
+  var OK = 200;
+  var BAD_REQUEST = 400;
+  var UNAUTHORIZED = 401;
+  var NOT_FOUND = 404;
+
   // Интерфейс модуля
   window.backend = {
     load: load, // Загрузка данных
@@ -18,17 +24,16 @@
       // для хранения текста ошибки при ее возникновении
       var error;
       switch (xhr.status) {
-        case 200:
+        case OK:
           onSuccess(xhr.response);
           break;
-
-        case 400:
+        case BAD_REQUEST:
           error = 'Неверный запрос';
           break;
-        case 401:
+        case UNAUTHORIZED:
           error = 'Пользователь не авторизован';
           break;
-        case 404:
+        case NOT_FOUND:
           error = 'Ничего не найдено';
           break;
 
@@ -51,7 +56,7 @@
     });
 
     // Выставляем таймаут
-    xhr.timeout = window.settings.XHR_TIMEOUT;
+    xhr.timeout = XHR_TIMEOUT;
 
     return xhr;
   }
