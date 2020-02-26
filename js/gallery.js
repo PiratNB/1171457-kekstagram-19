@@ -5,6 +5,11 @@
  */
 (function () {
 
+  // Интерфейс модуля
+  window.gallery = {
+    renderPictures: renderPictures // Отрисовка всех фотографий
+  };
+
   /**
    * Отрисовка всех фотографий
    * @param {Array} photoDescriptionsArray массив объектов с описанием фотографий
@@ -19,6 +24,5 @@
     // Вставляем фотографии
     document.querySelector('.pictures').appendChild(fragment);
   }
-  // Отрисовка массива описаний фотографий
-  renderPictures(window.data.photoDescriptions);
+
 })();

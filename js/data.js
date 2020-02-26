@@ -5,14 +5,6 @@
  */
 (function () {
 
-  // массив объектов фотографий
-  var photoDescriptions = getPhotoDescriptions(window.settings.PHOTO_COUNT);
-
-  // Интерфейс модуля
-  window.data = {
-    photoDescriptions: photoDescriptions // массив объектов фотографий
-  };
-
   /**
    * Возвращает случайное сообщение
    * @param {number} minMessageCount Минимальное кол-во сообщений (по умолчанию - 1)
@@ -92,4 +84,43 @@
 
     return returnArray;
   }
+  /**
+   * Обработка сообщения об ошибке при общении с сервером  ---> Временная заглушка
+   * @param {string} errorMessage сообщение об ошибке
+   */
+  function onErrorHandler(errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+    node.className = 'xhr-error-message';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  }
+
+  /**
+   * Обработка успешного события загрузки данных с сервера
+   * @param {Array} picturesData Массив магов с сервера
+   */
+  function onSuccessLoadData(picturesData) {
+    window.gallery.renderPictures(picturesData);
+  }
+
+  /**
+   * Обработка ошибочного события загрузки данных с сервера
+   * @param {String} errorMessage Сообщение об ошибке при загрузке данных с сервера
+   */
+  function onErrorLoadData(errorMessage) {
+    onErrorHandler(errorMessage);
+  }
+
+
+  if (window.settings.IS_USE_ONLINE_DATA) {
+    // Загрузка данных с сервера
+    window.backend.load(window.settings.DATA_URL, onSuccessLoadData, onErrorLoadData);
+  }
+  window.gallery.renderPictures(getPhotoDescriptions(window.settings.PHOTO_COUNT));
 })();
