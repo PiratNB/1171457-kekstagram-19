@@ -36,6 +36,8 @@
   var IS_USE_ONLINE_DATA = true;
   // URL для загрузки данных с сервера
   var DATA_URL = 'https://js.dump.academy/kekstagram/data';
+  // URL для отправки данных формы
+  var FORM_SEND_URL = 'https://js.dump.academy/kekstagram';
   // Тексты сообщений комментариев
   var commentMessages = [
     'Всё отлично!',
@@ -82,6 +84,7 @@
     FORM_UPLOAD_IMAGE_ACTION: FORM_UPLOAD_IMAGE_ACTION, // Ссылка на отправку формы
     IS_USE_ONLINE_DATA: IS_USE_ONLINE_DATA, // Флаг указывающий на использованиеонлайн данных, если false - используются моки
     DATA_URL: DATA_URL, // URL для загрузки данных с сервера
+    FORM_SEND_URL: FORM_SEND_URL, // URL для отправки данных формы
     commentMessages: commentMessages, // Тексты сообщений комментариев
     commentsNames: names // Имена коментаторов
   };

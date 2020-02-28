@@ -21,6 +21,7 @@
   function onBigPictureKeyDown(evt) {
     // Закрытие окна по Esc
     window.utils.processEscAction(evt, closeBigPicture);
+    // Закрытие окна по Enter на элементе
     if (evt.target === pictureCancel) {
       window.utils.processEnterAction(evt, closeBigPicture);
     }
