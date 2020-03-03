@@ -5,6 +5,12 @@
  */
 (function () {
 
+  // Шаблон для фотографии
+  var pictureTemplate = document.querySelector('#picture ')
+  .content
+  .querySelector('.picture');
+
+
   // Интерфейс модуля
   window.picture = {
     renderPicture: renderPicture // Возвращает отрисованный узел с фотографиями согласно шаблона
@@ -31,10 +37,6 @@
    * @return {Node}
    */
   function renderPicture(picture) {
-    // Шаблон для фотографии
-    var pictureTemplate = document.querySelector('#picture ')
-      .content
-      .querySelector('.picture');
     var pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('.picture__img').src = picture.url;
     pictureElement.querySelector('.picture__likes').textContent = picture.likes;
