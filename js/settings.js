@@ -30,6 +30,10 @@
   var MAX_HASHTAG_COUNT = 5;
   // Максимальная длина описания
   var MAX_DESCRIPTION_LENGTH = 140;
+  // Количество фотографий для случайного фильтра
+  var RANDOM_FILTER_COUNT = 10;
+  // Таймаут для устранения дребезга
+  var DEBOUNCE_INTERVAL = 500;
   // Ссылка на отправку формы
   var FORM_UPLOAD_IMAGE_ACTION = 'https://js.dump.academy/kekstagram';
   // Флаг указывающий на использованиеонлайн данных, если false - используются моки
@@ -83,6 +87,8 @@
     MAX_DESCRIPTION_LENGTH: MAX_DESCRIPTION_LENGTH, // Максимальная длина описания
     FORM_UPLOAD_IMAGE_ACTION: FORM_UPLOAD_IMAGE_ACTION, // Ссылка на отправку формы
     IS_USE_ONLINE_DATA: IS_USE_ONLINE_DATA, // Флаг указывающий на использованиеонлайн данных, если false - используются моки
+    RANDOM_FILTER_COUNT: RANDOM_FILTER_COUNT, // Количество фотографий для случайного фильтра
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL, // Таймаут для устранения дребезга
     DATA_URL: DATA_URL, // URL для загрузки данных с сервера
     FORM_SEND_URL: FORM_SEND_URL, // URL для отправки данных формы
     commentMessages: commentMessages, // Тексты сообщений комментариев
