@@ -34,6 +34,8 @@
   var RANDOM_FILTER_COUNT = 10;
   // Таймаут для устранения дребезга
   var DEBOUNCE_INTERVAL = 500;
+  // Размер порции комментариев
+  var LOAD_COMMENTS_COUNT = 5;
   // Ссылка на отправку формы
   var FORM_UPLOAD_IMAGE_ACTION = 'https://js.dump.academy/kekstagram';
   // Флаг указывающий на использованиеонлайн данных, если false - используются моки
@@ -91,6 +93,7 @@
     DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL, // Таймаут для устранения дребезга
     DATA_URL: DATA_URL, // URL для загрузки данных с сервера
     FORM_SEND_URL: FORM_SEND_URL, // URL для отправки данных формы
+    LOAD_COMMENTS_COUNT: LOAD_COMMENTS_COUNT, // Размер порции комментариев
     commentMessages: commentMessages, // Тексты сообщений комментариев
     commentsNames: names // Имена коментаторов
   };

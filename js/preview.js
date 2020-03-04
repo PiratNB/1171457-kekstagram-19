@@ -28,20 +28,13 @@
   }
 
   /**
-   * Обработчик клика на кнопку закрытия окна для большой картинки
-   */
-  function onCloseBigPictureClick() {
-    closeBigPicture();
-  }
-
-  /**
    * Скрытие окна с большой фотографией
    */
   function closeBigPicture() {
     window.utils.visibleToggle(bigPicture, false);
     // Удаляем обработчики
     document.removeEventListener('keydown', onBigPictureKeyDown);
-    pictureCancel.removeEventListener('click', onCloseBigPictureClick);
+    pictureCancel.removeEventListener('click', closeBigPicture);
     // Добавляем прокрутку контейнера фотографий позади при скролле
     document.body.classList.remove('modal-open');
   }
@@ -80,28 +73,28 @@
   function showBigPicture(photoDescription) {
     // Показываем контейнер для полноэкранной фотографии
     window.utils.visibleToggle(bigPicture, true);
-    // Выключаем видимость счетчика коментариев
-    window.utils.visibleToggle(document.querySelector('.social__comment-count'), false);
-    // Выключаем видимость кнопки загрузки новых комментариев
-    window.utils.visibleToggle(document.querySelector('.comments-loader'), false);
     // Убираем прокрутку контейнера фотографий позади при скролле
     document.body.classList.add('modal-open');
 
     // Добаляем обработчик нажатия клавиш при открытом диалоге большой картинки
     document.addEventListener('keydown', onBigPictureKeyDown);
     // Добавляем обработчик клика по кнопке закрытия
-    pictureCancel.addEventListener('click', onCloseBigPictureClick);
+    pictureCancel.addEventListener('click', closeBigPicture);
     // Разделяем описания картинок от хэштэгов
     var descriptionPart = photoDescription.description.match(/(?:[^#])*/);
     // Заменяем информацию для выбранной фотографии
     // url фотографии
     bigPicture.querySelector('img').src = photoDescription.url;
+    // альтернативное описание фотографии
+    bigPicture.querySelector('img').alt = descriptionPart;
     // Кол-во лайков
     bigPicture.querySelector('.likes-count').textContent = photoDescription.likes;
     // Кол-во комментариев
     bigPicture.querySelector('.comments-count').textContent = photoDescription.comments.length.toString();
     // Описание фоторафии
     bigPicture.querySelector('.social__caption').textContent = descriptionPart;
+    // Сохраняем ссылку на массив комментариев
+    bigPicture.comments = photoDescription.comments;
 
     // Список с коментариями
     var socialComments = bigPicture.querySelector('.social__comments');
@@ -110,15 +103,43 @@
       while (socialComments.firstChild) {
         socialComments.removeChild(socialComments.firstChild);
       }
-      // Фрагмент для вставки
-      var fragment = document.createDocumentFragment();
-      // Генерация комментариев
-      photoDescription.comments.forEach(function (comment) {
-        fragment.appendChild(renderComment(socialComments, comment));
-      });
 
-      socialComments.appendChild(fragment);
+      // показываем блок комментариев
+      showComments();
     }
   }
+  function showComments() {
+    // Список с коментариями
+    var socialComments = bigPicture.querySelector('.social__comments');
+    // Массив комментариев
+    var comments = bigPicture.comments;
+    // Текущее количество показанных комментариев
+    var currentShowedComments = socialComments.childElementCount;
+    // массив с новыми комментариями для показа
+    var newCommentsForShow = comments.slice(currentShowedComments, currentShowedComments + window.settings.LOAD_COMMENTS_COUNT);
+    // Контейнер для отображения прогресса показанных комментариев
+    var progressContainer = bigPicture.querySelector('.social__comment-count');
+    // Создаем текстовый узел с прогресом отображения комментариев
+    var progressCommentsContent = document.createTextNode((currentShowedComments + newCommentsForShow.length) + ' из ');
+    // заменяем содержимое предыдущего состояния прогресса
+    progressContainer.replaceChild(progressCommentsContent, progressContainer.childNodes[0]);
+
+    // Фрагмент для вставки
+    var fragment = document.createDocumentFragment();
+    // Генерация комментариев
+    for (var li = 0; li < newCommentsForShow.length; li++) {
+      fragment.appendChild(renderComment(socialComments, newCommentsForShow[li]));
+    }
+
+    // Вставляем блок с комментариями
+    socialComments.appendChild(fragment);
+
+    // управление видимостью кнопки загрузки новых комментариев
+    window.utils.visibleToggle(document.querySelector('.comments-loader'),
+        currentShowedComments + newCommentsForShow.length < comments.length);
+  }
+
+  // Добавляем обработчик клика по кнопке загрузки новых комментариев
+  document.querySelector('.comments-loader').addEventListener('click', showComments);
 
 })();
