@@ -23,7 +23,7 @@
     window.utils.processEscAction(evt, closeBigPicture);
     // Закрытие окна по Enter на элементе
     if (evt.target === pictureCancel) {
-      window.utils.processEnterAction(evt, closeBigPicture);
+      window.utils.processEnterAction(evt, closeBigPicture, true);
     }
   }
 
@@ -54,8 +54,8 @@
     socialPicture.classList.add('social__picture');
     socialPicture.src = comment.avatar;
     socialPicture.alt = comment.name;
-    socialPicture.width = 35;
-    socialPicture.height = 35;
+    socialPicture.width = window.settings.AVATAR_IMAGE_WIDTH;
+    socialPicture.height = window.settings.AVATAR_IMAGE_HEIGHT;
     socialComment.appendChild(socialPicture);
     // Текст комментария
     var socialText = document.createElement('p');
@@ -83,16 +83,18 @@
     // Разделяем описания картинок от хэштэгов
     var descriptionPart = photoDescription.description.match(/(?:[^#])*/);
     // Заменяем информацию для выбранной фотографии
+    // img для фотографии
+    var imgForPhoto = bigPicture.querySelector('img');
     // url фотографии
-    bigPicture.querySelector('img').src = photoDescription.url;
+    imgForPhoto.src = photoDescription.url;
     // альтернативное описание фотографии
-    bigPicture.querySelector('img').alt = descriptionPart;
+    imgForPhoto.alt = descriptionPart[0];
     // Кол-во лайков
     bigPicture.querySelector('.likes-count').textContent = photoDescription.likes;
     // Кол-во комментариев
     bigPicture.querySelector('.comments-count').textContent = photoDescription.comments.length.toString();
     // Описание фоторафии
-    bigPicture.querySelector('.social__caption').textContent = descriptionPart;
+    bigPicture.querySelector('.social__caption').textContent = descriptionPart[0];
     // Сохраняем ссылку на массив комментариев
     bigPicture.comments = photoDescription.comments;
 
@@ -127,9 +129,9 @@
     // Фрагмент для вставки
     var fragment = document.createDocumentFragment();
     // Генерация комментариев
-    for (var li = 0; li < newCommentsForShow.length; li++) {
-      fragment.appendChild(renderComment(socialComments, newCommentsForShow[li]));
-    }
+    newCommentsForShow.forEach(function (item) {
+      fragment.appendChild(renderComment(socialComments, item));
+    });
 
     // Вставляем блок с комментариями
     socialComments.appendChild(fragment);

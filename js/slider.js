@@ -4,8 +4,6 @@
  * Модуль для управлениея сдайдером насыщенности фильтра
  */
 (function () {
-  // Слайдер насыщености эффекта
-  var effectLevelPin = document.querySelector('.effect-level__pin');
 
   /**
    * Обработка нажатия кнопки мыши на слайдер
@@ -59,6 +57,6 @@
 
 
   // Добавляем обработчик нажатия кнопки мыши на слайдер
-  effectLevelPin.addEventListener('mousedown', onSliderMouseDown);
+  window.settings.effectLevelPin.addEventListener('mousedown', onSliderMouseDown);
 
 })();
