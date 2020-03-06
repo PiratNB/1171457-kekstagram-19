@@ -97,13 +97,7 @@
     var copiedPictures = picturesFromServer.slice();
     // сортируем по количеству комментариев
     copiedPictures.sort(function (left, right) {
-      if (right.comments.length > left.comments.length) {
-        return 1;
-      } else if (right.comments.length < left.comments.length) {
-        return -1;
-      } else {
-        return 0;
-      }
+      return right.comments.length - left.comments.length;
     });
 
     window.gallery.renderPictures(copiedPictures);
@@ -141,10 +135,7 @@
    */
   function onErrorLoadData(errorMessage) {
     onErrorHandler(errorMessage);
-
-    return;
   }
-
 
   // Загрузка данных с сервера
   window.backend.load(window.settings.DATA_URL, onSuccessLoadData, onErrorLoadData);
