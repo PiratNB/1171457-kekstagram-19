@@ -18,8 +18,8 @@
     // Фрагмент для вставки
     var fragment = document.createDocumentFragment();
 
-    photoDescriptionsArray.forEach(function (photo) {
-      fragment.appendChild(window.picture.renderPicture(photo));
+    photoDescriptionsArray.forEach(function (item) {
+      fragment.appendChild(window.picture.render(item));
     });
 
     // Очистка предыдущего набора фотографий
@@ -31,7 +31,7 @@
     });
 
     // Вставляем фотографии
-    document.querySelector('.pictures').appendChild(fragment);
+    pictures.appendChild(fragment);
   }
 
 })();

@@ -4,16 +4,6 @@
  * Модуль с настройками для проекта (общие константы, переменные...)
  */
 (function () {
-  // Количество случайных данных для моки
-  var PHOTO_COUNT = 25;
-  // Минимальное кол-во лайков
-  var MIN_LIKES_COUNT = 15;
-  // Максимальное кол-во лайков
-  var MAX_LIKES_COUNT = 200;
-  // Максимальное кол-во комментариев
-  var MAX_COMMENTS_COUNT = 7;
-  // Кол-во доступных аватарок
-  var COMMENTATORS_AVATAR_COUNT = 6;
   // Эффект по умолчанию
   var DEFAULT_EFFECT = 'effect-none';
   // Масштаб по умолчанию
@@ -38,12 +28,17 @@
   var LOAD_COMMENTS_COUNT = 5;
   // Ссылка на отправку формы
   var FORM_UPLOAD_IMAGE_ACTION = 'https://js.dump.academy/kekstagram';
-  // Флаг указывающий на использованиеонлайн данных, если false - используются моки
-  var IS_USE_ONLINE_DATA = true;
   // URL для загрузки данных с сервера
   var DATA_URL = 'https://js.dump.academy/kekstagram/data';
   // URL для отправки данных формы
   var FORM_SEND_URL = 'https://js.dump.academy/kekstagram';
+  // Ширина картинки для аватара
+  var AVATAR_IMAGE_WIDTH = 35;
+  // Высота картинки для аватара
+  var AVATAR_IMAGE_HEIGHT = 35;
+  // Слайдер насыщености эффекта
+  var effectLevelPin = document.querySelector('.effect-level__pin');
+
   // Тексты сообщений комментариев
   var commentMessages = [
     'Всё отлично!',
@@ -54,7 +49,8 @@
     'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
   ];
   // Имена коментаторов
-  var names = ['Иван',
+  var names = [
+    'Иван',
     'Хуан Себастьян',
     'Мария',
     'Кристоф',
@@ -72,13 +68,16 @@
     'Ирвинг'
   ];
 
+  // Поддерживаемые типы файлов аватарок
+  var FILE_TYPES = [
+    'gif',
+    'jpg',
+    'jpeg',
+    'png'
+  ];
+
   // Интерфейс модуля
   window.settings = {
-    PHOTO_COUNT: PHOTO_COUNT, // Количество случайных данных для моки
-    MIN_LIKES_COUNT: MIN_LIKES_COUNT, // Минимальное кол-во лайков
-    MAX_LIKES_COUNT: MAX_LIKES_COUNT, // Максимальное кол-во лайков
-    MAX_COMMENTS_COUNT: MAX_COMMENTS_COUNT, // Максимальное кол-во комментариев
-    COMMENTATORS_AVATAR_COUNT: COMMENTATORS_AVATAR_COUNT, // Кол-во доступных аватарок
     DEFAULT_EFFECT: DEFAULT_EFFECT, // Эффект по умолчанию
     DEFAULT_SCALE: DEFAULT_SCALE, // Масштаб по умолчанию
     SCALE_STEP: SCALE_STEP, // Шаг изменения масштаба
@@ -88,12 +87,15 @@
     MAX_HASHTAG_COUNT: MAX_HASHTAG_COUNT, // Максимальное количество хэштэгов
     MAX_DESCRIPTION_LENGTH: MAX_DESCRIPTION_LENGTH, // Максимальная длина описания
     FORM_UPLOAD_IMAGE_ACTION: FORM_UPLOAD_IMAGE_ACTION, // Ссылка на отправку формы
-    IS_USE_ONLINE_DATA: IS_USE_ONLINE_DATA, // Флаг указывающий на использованиеонлайн данных, если false - используются моки
     RANDOM_FILTER_COUNT: RANDOM_FILTER_COUNT, // Количество фотографий для случайного фильтра
     DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL, // Таймаут для устранения дребезга
     DATA_URL: DATA_URL, // URL для загрузки данных с сервера
     FORM_SEND_URL: FORM_SEND_URL, // URL для отправки данных формы
     LOAD_COMMENTS_COUNT: LOAD_COMMENTS_COUNT, // Размер порции комментариев
+    FILE_TYPES: FILE_TYPES, // Поддерживаемые типы файлов аватарок
+    AVATAR_IMAGE_WIDTH: AVATAR_IMAGE_WIDTH, // Ширина картинки для аватара
+    AVATAR_IMAGE_HEIGHT: AVATAR_IMAGE_HEIGHT, // Высота картинки для аватара
+    effectLevelPin: effectLevelPin, // Слайдер насыщености эффекта
     commentMessages: commentMessages, // Тексты сообщений комментариев
     commentsNames: names // Имена коментаторов
   };
