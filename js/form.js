@@ -225,7 +225,7 @@
   /**
    * Действия необходимые при закрытии окна сообщения
    */
-  function closeMessage() {
+  function onMessageWindowClose() {
     // Удаляем обработчики закрытия окна сообщения
     document.removeEventListener('click', onMessageCloseClick);
     document.removeEventListener('keydown', onMessageCloseKeydown);
@@ -239,7 +239,7 @@
    */
   function onMessageCloseClick(evt) {
     if (evt.target === document.querySelector('#upload-message-section')) {
-      closeMessage();
+      onMessageWindowClose();
     }
   }
 
@@ -249,10 +249,10 @@
    */
   function onMessageCloseKeydown(evt) {
     // Закрытие окна по Esc
-    window.utils.processEscAction(evt, closeMessage);
+    window.utils.processEscAction(evt, onMessageWindowClose);
     // Закрытие окна по Enter на элементе
     if (evt.target === closeMessageButton) {
-      window.utils.processEnterAction(evt, closeMessage, true);
+      window.utils.processEnterAction(evt, onMessageWindowClose, true);
     }
   }
 
@@ -275,7 +275,7 @@
 
     // Добавляем обработчики закрытия окна сообщения
     // по клику по кнопке
-    closeMessageButton.addEventListener('click', closeMessage);
+    closeMessageButton.addEventListener('click', onMessageWindowClose);
     // по клику вне окна сообщения
     document.addEventListener('click', onMessageCloseClick);
     // по нажатию Esc
@@ -302,9 +302,9 @@
    */
   function setFilterClass(filterClassName) {
     // Удаление всех лишних классов (если таковые устновлены), кроме установленного в разметке по умолчанию
-    for (var i = 1; i < imgUploadPreview.classList.length; i++) {
-      imgUploadPreview.classList.remove(imgUploadPreview.classList[1]);
-    }
+    imgUploadPreview.classList.forEach(function (el) {
+      imgUploadPreview.classList.remove(el);
+    });
 
     if (filterClassName === window.settings.DEFAULT_EFFECT) {
       window.utils.visibleToggle(fieldSetEffectLevel, false);

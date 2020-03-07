@@ -20,21 +20,21 @@
    */
   function onBigPictureKeyDown(evt) {
     // Закрытие окна по Esc
-    window.utils.processEscAction(evt, closeBigPicture);
+    window.utils.processEscAction(evt, OnBigPictureClose);
     // Закрытие окна по Enter на элементе
     if (evt.target === pictureCancel) {
-      window.utils.processEnterAction(evt, closeBigPicture, true);
+      window.utils.processEnterAction(evt, OnBigPictureClose, true);
     }
   }
 
   /**
    * Скрытие окна с большой фотографией
    */
-  function closeBigPicture() {
+  function OnBigPictureClose() {
     window.utils.visibleToggle(bigPicture, false);
     // Удаляем обработчики
     document.removeEventListener('keydown', onBigPictureKeyDown);
-    pictureCancel.removeEventListener('click', closeBigPicture);
+    pictureCancel.removeEventListener('click', OnBigPictureClose);
     // Добавляем прокрутку контейнера фотографий позади при скролле
     document.body.classList.remove('modal-open');
   }
@@ -79,7 +79,7 @@
     // Добаляем обработчик нажатия клавиш при открытом диалоге большой картинки
     document.addEventListener('keydown', onBigPictureKeyDown);
     // Добавляем обработчик клика по кнопке закрытия
-    pictureCancel.addEventListener('click', closeBigPicture);
+    pictureCancel.addEventListener('click', OnBigPictureClose);
     // Разделяем описания картинок от хэштэгов
     var descriptionPart = photoDescription.description.match(/(?:[^#])*/);
     // Заменяем информацию для выбранной фотографии
@@ -107,10 +107,10 @@
       }
 
       // показываем блок комментариев
-      showComments();
+      onCommentsShow();
     }
   }
-  function showComments() {
+  function onCommentsShow() {
     // Список с коментариями
     var socialComments = bigPicture.querySelector('.social__comments');
     // Массив комментариев
@@ -142,6 +142,6 @@
   }
 
   // Добавляем обработчик клика по кнопке загрузки новых комментариев
-  document.querySelector('.comments-loader').addEventListener('click', showComments);
+  document.querySelector('.comments-loader').addEventListener('click', onCommentsShow);
 
 })();
