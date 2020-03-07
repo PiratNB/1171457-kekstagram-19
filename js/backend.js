@@ -2,12 +2,10 @@
 
 (function () {
 
-  var XHR_TIMEOUT = 10000;
-  var OK = 200;
-  var BAD_REQUEST = 400;
-  var UNAUTHORIZED = 401;
-  var NOT_FOUND = 404;
-
+  var HTTP_OK = 200;
+  var HTTP_BAD_REQUEST = 400;
+  var HTTP_UNAUTHORIZED = 401;
+  var HTTP_NOT_FOUND = 404;
   // Интерфейс модуля
   window.backend = {
     load: load, // Загрузка данных
@@ -24,16 +22,17 @@
       // для хранения текста ошибки при ее возникновении
       var error;
       switch (xhr.status) {
-        case OK:
+        case HTTP_OK:
           onSuccess(xhr.response);
           break;
-        case BAD_REQUEST:
+
+        case HTTP_BAD_REQUEST:
           error = 'Неверный запрос';
           break;
-        case UNAUTHORIZED:
+        case HTTP_UNAUTHORIZED:
           error = 'Пользователь не авторизован';
           break;
-        case NOT_FOUND:
+        case HTTP_NOT_FOUND:
           error = 'Ничего не найдено';
           break;
 
@@ -50,13 +49,13 @@
       onError('Произошла ошибка соединения');
     });
 
-    // Обработчик при превышении таймаута
+    // Обработчик превышения таймаута
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     // Выставляем таймаут
-    xhr.timeout = XHR_TIMEOUT;
+    xhr.timeout = window.settings.XHR_TIMEOUT;
 
     return xhr;
   }
