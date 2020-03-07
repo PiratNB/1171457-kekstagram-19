@@ -24,6 +24,7 @@
     // Закрытие окна по Enter на элементе
     if (evt.target === pictureCancel) {
       window.utils.processEnterAction(evt, OnBigPictureClose, true);
+
     }
   }
 
