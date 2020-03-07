@@ -20,21 +20,21 @@
    */
   function onBigPictureKeyDown(evt) {
     // Закрытие окна по Esc
-    window.utils.processEscAction(evt, closeBigPicture);
+    window.utils.processEscAction(evt, OnBigPictureClose);
     // Закрытие окна по Enter на элементе
     if (evt.target === pictureCancel) {
-      window.utils.processEnterAction(evt, closeBigPicture);
+      window.utils.processEnterAction(evt, OnBigPictureClose, true);
     }
   }
 
   /**
    * Скрытие окна с большой фотографией
    */
-  function closeBigPicture() {
+  function OnBigPictureClose() {
     window.utils.visibleToggle(bigPicture, false);
     // Удаляем обработчики
     document.removeEventListener('keydown', onBigPictureKeyDown);
-    pictureCancel.removeEventListener('click', closeBigPicture);
+    pictureCancel.removeEventListener('click', OnBigPictureClose);
     // Добавляем прокрутку контейнера фотографий позади при скролле
     document.body.classList.remove('modal-open');
   }
@@ -54,8 +54,8 @@
     socialPicture.classList.add('social__picture');
     socialPicture.src = comment.avatar;
     socialPicture.alt = comment.name;
-    socialPicture.width = 35;
-    socialPicture.height = 35;
+    socialPicture.width = window.settings.AVATAR_IMAGE_WIDTH;
+    socialPicture.height = window.settings.AVATAR_IMAGE_HEIGHT;
     socialComment.appendChild(socialPicture);
     // Текст комментария
     var socialText = document.createElement('p');
@@ -79,20 +79,22 @@
     // Добаляем обработчик нажатия клавиш при открытом диалоге большой картинки
     document.addEventListener('keydown', onBigPictureKeyDown);
     // Добавляем обработчик клика по кнопке закрытия
-    pictureCancel.addEventListener('click', closeBigPicture);
+    pictureCancel.addEventListener('click', OnBigPictureClose);
     // Разделяем описания картинок от хэштэгов
     var descriptionPart = photoDescription.description.match(/(?:[^#])*/);
     // Заменяем информацию для выбранной фотографии
+    // img для фотографии
+    var imgForPhoto = bigPicture.querySelector('img');
     // url фотографии
-    bigPicture.querySelector('img').src = photoDescription.url;
+    imgForPhoto.src = photoDescription.url;
     // альтернативное описание фотографии
-    bigPicture.querySelector('img').alt = descriptionPart;
+    imgForPhoto.alt = descriptionPart[0];
     // Кол-во лайков
     bigPicture.querySelector('.likes-count').textContent = photoDescription.likes;
     // Кол-во комментариев
     bigPicture.querySelector('.comments-count').textContent = photoDescription.comments.length.toString();
     // Описание фоторафии
-    bigPicture.querySelector('.social__caption').textContent = descriptionPart;
+    bigPicture.querySelector('.social__caption').textContent = descriptionPart[0];
     // Сохраняем ссылку на массив комментариев
     bigPicture.comments = photoDescription.comments;
 
@@ -105,10 +107,10 @@
       }
 
       // показываем блок комментариев
-      showComments();
+      onCommentsShow();
     }
   }
-  function showComments() {
+  function onCommentsShow() {
     // Список с коментариями
     var socialComments = bigPicture.querySelector('.social__comments');
     // Массив комментариев
@@ -127,9 +129,9 @@
     // Фрагмент для вставки
     var fragment = document.createDocumentFragment();
     // Генерация комментариев
-    for (var li = 0; li < newCommentsForShow.length; li++) {
-      fragment.appendChild(renderComment(socialComments, newCommentsForShow[li]));
-    }
+    newCommentsForShow.forEach(function (item) {
+      fragment.appendChild(renderComment(socialComments, item));
+    });
 
     // Вставляем блок с комментариями
     socialComments.appendChild(fragment);
@@ -140,6 +142,6 @@
   }
 
   // Добавляем обработчик клика по кнопке загрузки новых комментариев
-  document.querySelector('.comments-loader').addEventListener('click', showComments);
+  document.querySelector('.comments-loader').addEventListener('click', onCommentsShow);
 
 })();

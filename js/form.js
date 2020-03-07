@@ -14,8 +14,6 @@
   var imgUploadCancel = imgUploadOverlay.querySelector('.img-upload__cancel');
   // Список фильтров
   var effectList = imgUploadOverlay.querySelector('.effects__list');
-  // Слайдер насыщености эффекта
-  var effectLevelPin = imgUploadOverlay.querySelector('.effect-level__pin');
   // кнопка уменьшения масштаба
   var scaleControlSmaller = imgUploadOverlay.querySelector('.scale__control--smaller');
   // кнопка увеличения масштаба
@@ -28,6 +26,9 @@
   var scaleControlValue = imgUploadOverlay.querySelector('.scale__control--value');
   // Картинка предварительного просмотра
   var imgUploadPreview = document.querySelector('.img-upload__preview');
+  // Каринка для отрисовки
+  var imgElement = imgUploadPreview.querySelector('IMG');
+
   // филдсет со сладером эффектов
   var fieldSetEffectLevel = imgUploadOverlay.querySelector('.effect-level');
   // Прогрессбар слайдера
@@ -88,7 +89,34 @@
 
       return;
     }
-    openImgUploadForm();
+    // первый из списка файлов
+    var file = uploadFileInput.files[0];
+    // Имя файла
+    var fileName = file.name.toLowerCase();
+    // проверка по расширению файла
+    var matches = window.settings.FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        if (imgElement) {
+          imgElement.src = reader.result;
+        }
+
+        // назначение картинок превьюшкам
+        var effectPreviews = effectList.querySelectorAll('.effects__preview');
+        effectPreviews.forEach(function (item) {
+          item.style.backgroundImage = 'url(' + reader.result + ')';
+        });
+        // Показываем форму предварительного просмотра
+        openImgUploadForm();
+      });
+
+      reader.readAsDataURL(file);
+    }
   }
 
   /**
@@ -160,11 +188,16 @@
 
   /**
    * Обработка события удачной отправки данных на сервер
-  */
+   */
   function onSuccessSaveData() {
     closeImgUploadForm();
     uploadMessage('success', 'Изображение успешно загружено');
   }
+
+  /**
+   * Обработка ошибочного события отправки данных на сервер
+   * @param {String} errorMessage Сообщение об ошибке при загрузке данных с сервера
+   */
 
   /**
    * Обработка ошибочного события отправки данных на сервер
@@ -192,7 +225,7 @@
   /**
    * Действия необходимые при закрытии окна сообщения
    */
-  function closeMessage() {
+  function onMessageWindowClose() {
     // Удаляем обработчики закрытия окна сообщения
     document.removeEventListener('click', onMessageCloseClick);
     document.removeEventListener('keydown', onMessageCloseKeydown);
@@ -206,7 +239,7 @@
    */
   function onMessageCloseClick(evt) {
     if (evt.target === document.querySelector('#upload-message-section')) {
-      closeMessage();
+      onMessageWindowClose();
     }
   }
 
@@ -216,10 +249,10 @@
    */
   function onMessageCloseKeydown(evt) {
     // Закрытие окна по Esc
-    window.utils.processEscAction(evt, closeMessage);
+    window.utils.processEscAction(evt, onMessageWindowClose);
     // Закрытие окна по Enter на элементе
     if (evt.target === closeMessageButton) {
-      window.utils.processEnterAction(evt, closeMessage, true);
+      window.utils.processEnterAction(evt, onMessageWindowClose, true);
     }
   }
 
@@ -242,7 +275,7 @@
 
     // Добавляем обработчики закрытия окна сообщения
     // по клику по кнопке
-    closeMessageButton.addEventListener('click', closeMessage);
+    closeMessageButton.addEventListener('click', onMessageWindowClose);
     // по клику вне окна сообщения
     document.addEventListener('click', onMessageCloseClick);
     // по нажатию Esc
@@ -261,7 +294,6 @@
     } else {
       textElement.style.borderColor = 'red';
     }
-    formUploadImage.reportValidity();
   }
 
   /**
@@ -270,9 +302,9 @@
    */
   function setFilterClass(filterClassName) {
     // Удаление всех лишних классов (если таковые устновлены), кроме установленного в разметке по умолчанию
-    for (var i = 1; i < imgUploadPreview.className.length; i++) {
-      imgUploadPreview.classList.remove(imgUploadPreview.classList[1]);
-    }
+    imgUploadPreview.classList.forEach(function (el) {
+      imgUploadPreview.classList.remove(el);
+    });
 
     if (filterClassName === window.settings.DEFAULT_EFFECT) {
       window.utils.visibleToggle(fieldSetEffectLevel, false);
@@ -280,8 +312,6 @@
     }
     imgUploadPreview.classList.add(filterOption[filterClassName].previewClass);
     window.utils.visibleToggle(fieldSetEffectLevel, true);
-
-    return;
   }
 
   /**
@@ -290,23 +320,23 @@
    */
   function setFilterValue(filterValue) {
     if (currentFilterId === window.settings.DEFAULT_EFFECT) {
-      imgUploadPreview.style.fiter = '';
+      imgUploadPreview.style.filter = '';
     } else {
       imgUploadPreview.style.filter = filterOption[currentFilterId].filter(filterValue);
     }
     effectLevelValue.value = parseInt(filterValue * 100, 10);
-    effectLevelPin.style.left = filterValue * 100 + '%';
+    window.settings.effectLevelPin.style.left = filterValue * 100 + '%';
     effectLevelDepth.style.width = filterValue * 100 + '%';
 
   }
 
   /**
    * Присваивает масштаб картинки
-   * @param {number} Scale масштаб кртинки
+   * @param {number} scale масштаб кртинки
    */
-  function setImageScale(Scale) {
-    imgUploadPreview.style.transform = 'scale(' + (Scale / 100) + ')';
-    scaleControlValue.value = Scale + '%';
+  function setImageScale(scale) {
+    imgUploadPreview.style.transform = 'scale(' + (scale / 100) + ')';
+    scaleControlValue.value = scale + '%';
   }
 
   /**
@@ -352,7 +382,7 @@
    * @return {string} строка с сообщением об ошибке
    */
   function checkHashTags(hashTagStr) {
-    if (hashTagStr.length === 0) {
+    if (!hashTagStr.length) {
       return '';
     }
     // Массив хэштэтов
@@ -392,7 +422,7 @@
    * @return {string} строка с сообщением об ошибке
    */
   function checkDescription(descriptionStr) {
-    if (descriptionStr.length === 0) {
+    if (!descriptionStr.length) {
       return '';
     } else if (descriptionStr.length > window.settings.MAX_DESCRIPTION_LENGTH) {
       return 'Максимальная длина описания: ' + window.settings.MAX_DESCRIPTION_LENGTH;
@@ -407,16 +437,19 @@
    */
   function setDefaultState(clearUploadFileInputValue) {
     currentFilterId = window.settings.DEFAULT_EFFECT;
-    setFilterClass(window.settings.DEFAULT_EFFECT);
-    currentFilterId = window.settings.DEFAULT_EFFECT;
+    setFilterClass(currentFilterId);
     // слайдер на 100%
     setFilterValue(1);
     // По умолчанию выставляем без фильтров
     imgUploadOverlay.querySelector('#' + window.settings.DEFAULT_EFFECT).checked = true;
     setImageScale(window.settings.DEFAULT_SCALE);
-    // Очистка полей ввода
+    // Очистка полей ввода и ошибок валидации
     textHashtags.value = '';
+    textHashtags.setCustomValidity('');
+    textReportValidity(textHashtags);
     textDescription.value = '';
+    textDescription.setCustomValidity('');
+    textReportValidity(textDescription);
     // сбрасывем значение поля выбора файла
     if (clearUploadFileInputValue) {
       uploadFileInput.value = '';
